@@ -91,10 +91,7 @@ benchforkexecl(B *b)
 	}
 }
 
-struct {
-	char *name;
-	BFn fun;
-} tests[] = {
+BItem tests[] = {
 	{"mallocfree", benchmallocfree},
 	{"rand", benchrand},
 	{"truerand", benchtruerand},
@@ -117,12 +114,12 @@ main(int argc, char *argv[])
 
 	if(argv[0] == nil){
 		for(i = 0; i < nelem(tests); i++){
-			bench(tests[i].name, tests[i].fun);
+			bench(tests[i].name, tests[i].fn);
 		}
 	} else {
 		for(i = 0; i < nelem(tests); i++){
 			if(strncmp(argv[0], tests[i].name, strlen(argv[0])) == 0)
-				bench(tests[i].name, tests[i].fun);
+				bench(tests[i].name, tests[i].fn);
 		}
 	}
 
