@@ -19,7 +19,7 @@ uninstall:V:
 test:	$O.test true
 	$O.test
 
-$O.test:	test.$O $LIB
+$O.test:	test.$O
 	$LD -o $target $prereq
 
 true: $O.true
