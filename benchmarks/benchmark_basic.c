@@ -13,30 +13,10 @@ benchmallocfree(B *b)
 }
 
 void
-benchrand(B *b)
-{
-	int i;
-
-	for(i = 0; i < b->N; i++) {
-		(void)rand();
-	}
-}
-
-void
-benchtruerand(B *b)
-{
-	int i;
-
-	for(i = 0; i < b->N; i++) {
-		(void)truerand();
-	}
-}
-
-void
 benchinc(B *b)
 {
 	int i;
-	long inc;
+	long inc = 0;
 
 	for(i = 0; i < b->N; i++) {
 		inc++;
@@ -47,7 +27,7 @@ void
 benchainc(B *b)
 {
 	int i;
-	long inc;
+	long inc = 0;
 
 	for(i = 0; i < b->N; i++) {
 		ainc(&inc);
@@ -83,7 +63,7 @@ benchforkexecl(B *b)
 	
 	for(i = 0; i < b->N; i++){
 		if(!fork()){
-			execl("./true", "true", nil);
+			execl("/bin/syscall", "syscall", "exits", nil);
 			fprint(2, "execl: %r\n");
 			exits("execl");
 		}
@@ -91,15 +71,41 @@ benchforkexecl(B *b)
 	}
 }
 
+void
+benchmemcpy(B *b)
+{
+	int i;
+	uchar mem[2048];
+	
+	for(i = 0; i < b->N; i++){
+		memcpy(mem, mem+1024, 1024);
+	}
+
+	benchbytes(b, 1024);
+}
+
+void
+benchmemmove(B *b)
+{
+	int i;
+	uchar mem[2048];
+	
+	for(i = 0; i < b->N; i++){
+		memmove(mem, mem+1024, 1024);
+	}
+
+	benchbytes(b, 1024);
+}
+
 BItem tests[] = {
 	{"mallocfree", benchmallocfree},
-	{"rand", benchrand},
-	{"truerand", benchtruerand},
 	{"inc", benchinc},
 	{"ainc", benchainc},
 	{"openclose", benchopenclose},
 	{"fork", benchfork},
 	{"forkexecl", benchforkexecl},
+	{"memcpy", benchmemcpy},
+	{"memmove", benchmemmove},
 };
 
 void
