@@ -83,7 +83,7 @@ benchforkexecl(B *b)
 	
 	for(i = 0; i < b->N; i++){
 		if(!fork()){
-			execl("./true", nil);
+			execl("./true", "true", nil);
 			fprint(2, "execl: %r\n");
 			exits("execl");
 		}
