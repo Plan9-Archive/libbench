@@ -46,3 +46,4 @@ void benchitems(BItem[], int);
  */
 
 void benchbytes(B*, vlong);
+void benchreset(B*);

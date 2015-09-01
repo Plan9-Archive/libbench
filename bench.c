@@ -32,9 +32,7 @@ benchrunn(B *b, int n)
 	b->N = n;
 
 	// reset
-	b->start = nsec();
-	b->ns = 0;
-	cycles(&b->scycles);
+	benchreset(b);
 
 	b->item.fn(b);
 
@@ -240,4 +238,13 @@ void
 benchbytes(B *b, vlong bytes)
 {
 	b->bytes = bytes;
+}
+
+/* benchreset resets the benchmark timer */
+void
+benchreset(B *b)
+{
+	b->start = nsec();
+	b->ns = 0;
+	cycles(&b->scycles);	
 }
