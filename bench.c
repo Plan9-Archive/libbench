@@ -9,26 +9,25 @@ uvlong boverhead;
 static int
 min(int x, int y)
 {
-        if(x > y) {
-                return y;
-        }
-        return x;
+	if(x > y) {
+		return y;
+	}
+	return x;
 }
 
 static int
 max(int x, int y)
 {
-        if(x < y) {
-                return y;
-        }
-        return x;
+	if(x < y) {
+		return y;
+	}
+	return x;
 }
 
 // run the benchmarking function once, looping n times
 static void
 benchrunn(B *b, int n)
 {
-
 	b->N = n;
 
 	// reset
