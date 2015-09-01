@@ -5,7 +5,7 @@ P=bench
 LIB=lib$P.$O.a
 OFILES=$P.$O
 HFILES=/sys/include/$P.h
-CLEANFILES=$O.test $O.true true
+CLEANFILES=$O.test $O.true true $O.crypto
 
 </sys/src/cmd/mksyslib
 
@@ -16,7 +16,7 @@ install:V:	$LIB
 uninstall:V:
 	rm -f /$objtype/lib/lib$P.a /sys/include/$P.h
 
-test:	$O.test true
+test:V:	$O.test true
 	$O.test
 
 $O.test:	test.$O
@@ -26,4 +26,10 @@ true: $O.true
 	cp $O.true true
 
 $O.true:	true.$O
+	$LD -o $target $prereq
+
+crypto:V:	$O.crypto
+	$O.crypto
+
+$O.crypto:	crypto.$O
 	$LD -o $target $prereq
