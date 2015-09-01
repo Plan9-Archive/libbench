@@ -78,6 +78,34 @@ benchdsagen(B *b)
 }
 
 /* get rid of this goo once libsec has better ec functions */
+void
+_ecfreepoint(ECpoint *pt)
+{
+	if(pt != nil) {
+		mpfree(pt->x);
+		mpfree(pt->y);
+	}
+
+	free(pt);
+}
+
+void
+_ecfreedomain(ECdomain *dom)
+{
+	if(dom != nil) {
+		mpfree(dom->p);
+		mpfree(dom->a);
+		mpfree(dom->b);
+		if(dom->G != nil) {
+			_ecfreepoint(dom->G);
+		}
+		mpfree(dom->n);
+		mpfree(dom->h);
+	}
+
+	free(dom);
+}
+
 ECdomain *
 _ecnamedcurve(int id)
 {
@@ -102,28 +130,11 @@ _ecnamedcurve(int id)
 	}
 
 	if(dom->p == nil || dom->a == nil || dom->b == nil || dom->G == nil || dom->n == nil || dom->h == nil) {
-		ecfreedomain(dom);
+		_ecfreedomain(dom);
 		return nil;
 	}
 
 	return dom;
-}
-
-void
-_ecfreedomain(ECdomain *dom)
-{
-	if(dom != nil) {
-		mpfree(dom->p);
-		mpfree(dom->a);
-		mpfree(dom->b);
-		if(dom->G != nil) {
-			ecfreepoint(dom->G);
-		}
-		mpfree(dom->n);
-		mpfree(dom->h);
-	}
-
-	free(dom);
 }
 
 void
