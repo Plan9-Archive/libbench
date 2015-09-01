@@ -20,6 +20,7 @@ struct BResult
 	int N;
 	vlong ns;
 	uvlong cycles;
+	vlong bytes;
 };
 
 // type passed to bench functions
@@ -28,6 +29,7 @@ struct B
 	int N;
 	vlong start;	/* start ns */
 	vlong ns;	/* duration */
+	vlong bytes;	/* bytes processed */
 	uvlong scycles;	/* start cycles */
 	uvlong ecycles;	/* end cycles */
 	uvlong bcycles;	/* best cycles */
@@ -38,3 +40,9 @@ struct B
 void benchinit(void);
 void bench(char *name, BFn);
 void benchitems(BItem[], int);
+
+/*
+ * functions callable inside benchmarks
+ */
+
+void benchbytes(B*, vlong);

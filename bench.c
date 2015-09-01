@@ -131,6 +131,7 @@ benchrun(B *b)
 	res.N = b->N;
 	res.ns = b->ns;
 	res.cycles = b->bcycles;
+	res.bytes = b->bytes;
 
 	return res;
 }
@@ -142,6 +143,7 @@ benchres(BResult *res)
 	char cyop[32];
 	vlong nsperop;
 	uvlong cyperop;
+	double mbps;
 
 	if(res->N <= 0) {
 		nsperop = 0;
@@ -168,7 +170,15 @@ benchres(BResult *res)
 			snprint(cyop, sizeof(cyop), "%12.1f  cy/op", (double)res->cycles / (double)res->N);
 	}
 
-	print("%10d N\t%s\t%s\n", res->N, nsop, cyop);
+	print("%10d N\t%s\t%s", res->N, nsop, cyop);
+
+	/* show MB/s if test called benchbytes */
+	if(res->bytes > 0){
+		mbps = ((double)res->bytes * (double)res->N / 1000000.0) / ((double)res->ns / 1000000000.0);
+		print("\t%7.2f MB/s", mbps);
+	}
+
+	print("\n");
 }
 
 /*
@@ -223,4 +233,11 @@ benchitems(BItem items[], int len)
 	for(i = 0; i < len; i++) {
 		bench(items[i].name, items[i].fn);
 	}
+}
+
+/* benchbytes records the number of bytes processed in a single operation. */
+void
+benchbytes(B *b, vlong bytes)
+{
+	b->bytes = bytes;
 }
