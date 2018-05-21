@@ -77,66 +77,6 @@ benchdsagen(B *b)
 	}
 }
 
-/* get rid of this goo once libsec has better ec functions */
-void
-_ecfreepoint(ECpoint *pt)
-{
-	if(pt != nil) {
-		mpfree(pt->x);
-		mpfree(pt->y);
-	}
-
-	free(pt);
-}
-
-void
-_ecfreedomain(ECdomain *dom)
-{
-	if(dom != nil) {
-		mpfree(dom->p);
-		mpfree(dom->a);
-		mpfree(dom->b);
-		if(dom->G != nil) {
-			_ecfreepoint(dom->G);
-		}
-		mpfree(dom->n);
-		mpfree(dom->h);
-	}
-
-	free(dom);
-}
-
-ECdomain *
-_ecnamedcurve(int id)
-{
-	ECdomain *dom;
-	dom = malloc(sizeof(ECdomain));
-	if(dom == nil)
-		return nil;
-
-	switch(id) {
-	default:
-		free(dom);
-		return nil;
-	/* Secp256r1 */
-	case 0:
-		dom->p = strtomp("FFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF", nil, 16, nil);
-		dom->a = strtomp("FFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFC", nil, 16, nil);
-		dom->b = strtomp("5AC635D8AA3A93E7B3EBBD55769886BC651D06B0CC53B0F63BCE3C3E27D2604B", nil, 16, nil);
-		dom->G = strtoec(dom, "036B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296", nil, nil);
-		dom->n = strtomp("FFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551", nil, 16, nil);
-		dom->h = uitomp(1, nil);
-		break;
-	}
-
-	if(dom->p == nil || dom->a == nil || dom->b == nil || dom->G == nil || dom->n == nil || dom->h == nil) {
-		_ecfreedomain(dom);
-		return nil;
-	}
-
-	return dom;
-}
-
 void
 ecprivfree(ECpriv *priv)
 {
@@ -156,7 +96,8 @@ benchecgen(B *b)
 	ECdomain *dom;
 	ECpriv *p;
 
-	dom = _ecnamedcurve(0);
+	dom = mallocz(sizeof(*dom), 1);
+	ecdominit(dom, secp256r1);
 	assert(dom);
 
 	benchreset(b);
@@ -167,7 +108,7 @@ benchecgen(B *b)
 		ecprivfree(p);
 	}
 
-	_ecfreedomain(dom);
+	ecdomfree(dom);
 }
 
 void
